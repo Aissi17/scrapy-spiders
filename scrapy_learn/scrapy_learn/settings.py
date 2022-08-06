@@ -6,6 +6,10 @@
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+import os
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
 
 BOT_NAME = "scrapy_learn"
 
@@ -62,9 +66,10 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-#    'scrapy_learn.pipelines.QuotesSpiderPipeline': 300,
-# }
+ITEM_PIPELINES = {
+    "scrapy.pipelines.images.ImagesPipeline": 1,
+}
+IMAGES_STORE = os.path.join(BASE_DIR, "assets")
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

@@ -11,3 +11,8 @@ from itemadapter import ItemAdapter
 class QuotesSpiderPipeline:
     def process_item(self, item, spider):
         return item
+
+
+class BooksSpiderPipeline:
+    def process_item(self, item, spider):
+        return item
