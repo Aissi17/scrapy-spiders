@@ -18,4 +18,25 @@ class BooksSpider(Spider):
         yield Request(absolute_next_page_url)
 
     def parse_book(self, response):
-        pass
+        title = response.xpath("//h1/text()").extract_first()
+        price = response.xpath('//p[@class="price_color"]/text()').extract_first()
+        image_url = response.xpath("//img/@src").extract_first()
+        image_url = image_url.replace("../..", "https://books.toscrape.com/")
+        rating = (
+            response.xpath('//p[contains(@class,"star-rating")]/@class')
+            .extract_first()
+            .split(" ")[1]
+        )
+        description = response.xpath(
+            '//*[@id="product_description"]/following-sibling::p/text()'
+        ).extract_first()
+
+        # product information
+
+        yield {
+            "title": title,
+            "price": price,
+            "image_url": image_url,
+            "rating": rating,
+            "description": description,
+        }
