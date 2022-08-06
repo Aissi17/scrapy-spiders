@@ -1,5 +1,7 @@
 from scrapy import Spider
 from scrapy.http import Request
+from scrapy.loader import ItemLoader
+from scrapy_learn.items import BooksSpiderItem
 
 
 class BooksSpider(Spider):
@@ -18,10 +20,12 @@ class BooksSpider(Spider):
         yield Request(absolute_next_page_url)
 
     def parse_book(self, response):
+        l = ItemLoader(item=BooksSpiderItem(), response=response)
+
         title = response.xpath("//h1/text()").extract_first()
         price = response.xpath('//p[@class="price_color"]/text()').extract_first()
-        image_url = response.xpath("//img/@src").extract_first()
-        image_url = image_url.replace("../..", "https://books.toscrape.com/")
+        image_urls = response.xpath("//img/@src").extract_first()
+        image_urls = image_urls.replace("../..", "https://books.toscrape.com/")
         rating = (
             response.xpath('//p[contains(@class,"star-rating")]/@class')
             .extract_first()
@@ -31,12 +35,10 @@ class BooksSpider(Spider):
             '//*[@id="product_description"]/following-sibling::p/text()'
         ).extract_first()
 
-        # product information
+        l.add_value("title", title)
+        l.add_value("price", price)
+        l.add_value("image_urls", image_urls)
+        l.add_value("rating", rating)
+        l.add_value("description", description)
 
-        yield {
-            "title": title,
-            "price": price,
-            "image_url": image_url,
-            "rating": rating,
-            "description": description,
-        }
+        return l.load_item()
