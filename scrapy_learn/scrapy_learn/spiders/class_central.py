@@ -16,7 +16,7 @@ class ClassCentralSpider(scrapy.Spider):
     def parse(self, response):
         if self.subject:
             subject_url = response.xpath(
-                f"//*[contains(@title,{self.subject})]/@href"
+                f"//span[contains(text(),'{self.subject}')]/../@href"
             ).extract_first()
 
             yield Request(response.urljoin(subject_url), callback=self.parse_subject)
